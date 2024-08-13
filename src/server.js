@@ -1,12 +1,15 @@
 const app = require('./app');
 const sequelize = require('./utils/connection');
 
+require('./models/User');
+// require('./models/Post');
+
 const PORT = process.env.PORT || 8080;
 console.log(PORT)
 
 const main = async () => {
     try {
-        sequelize.sync();
+        sequelize.sync(); //{alter: true} {force: true}
         console.log("DB connected");
         app.listen(PORT);
         console.log(`Server running on port ${PORT}`);
@@ -15,5 +18,4 @@ const main = async () => {
         console.log(error)
     }
 }
-
 main();
