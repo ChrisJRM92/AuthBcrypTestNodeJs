@@ -1,8 +1,9 @@
 const Post = require("../models/Post");
+const User = require("../models/User");
 const catchError = require("../utils/catchError");
 
 const getAll = catchError(async(req, res) => {
-    const results = await Post.findAll();
+    const results = await Post.findAll({include: [User]});
     return res.json(results);
 });
 
@@ -27,6 +28,7 @@ const remove = catchError(async(req, res) => {
 
 const update = catchError(async(req, res) => {
     const { id } = req.params;
+    delete req.body.userId;
     const result = await Post.update(
         req.body,
         { where: {id}, returning: true }

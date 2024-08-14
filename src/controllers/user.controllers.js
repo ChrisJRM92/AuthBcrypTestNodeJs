@@ -1,10 +1,11 @@
 const catchError = require('../utils/catchError');
 const User = require('../models/User');
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const Post = require('../models/Post');
 
 const getAll = catchError(async(req, res) => {
-    const results = await User.findAll();
+    const results = await User.findAll({include: [Post]});
     return res.json(results);
 });
 
@@ -53,7 +54,15 @@ const login = catchError(async(req, res)=>{
     
     const token = jwt.sign({user}, process.env.TOKEN, {expiresIn: '1d'})
     return res.status(200).json({user: user, token: token})
-})
+});
+
+const setPost = catchError(async(req,res)=>{
+    const { id } = req.params;
+    const user = await User.findByPk(id)
+    await user.setPosts(req.body)
+    const post = await user.getPosts()
+    return res.json(post) 
+});
 
 module.exports = {
     getAll,
@@ -61,5 +70,6 @@ module.exports = {
     getOne,
     remove,
     update,
-    login
+    login,
+    setPost
 }
